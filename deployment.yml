@@ -1,0 +1,35 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+    name: auth-service
+spec:
+    selector:
+        app: auth
+    ports:
+        - protocol: 'TCP'
+          # Port accessible inside cluster
+          port: 4002
+          # Port to forward to inside the pod
+          targetPort: 4001
+          # Port accessible outside cluster
+          nodePort: 30001
+    type: LoadBalancer
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    name: auth-deployment
+spec:
+    replicas: 2
+    template:
+        metadata:
+            labels:
+                app: auth
+        spec:
+            containers:
+                - name: auth
+                  image: 49514951/auth
+                  ports:
+                      - containerPort: 4001
