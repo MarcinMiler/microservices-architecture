@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+    auth:
+        build:
+            context: ./auth
+        container_name: microservice-auth
+        command: sh -c "yarn start:dev"
+        environment:
+            - RABBITMQ_DEFAULT_PASS=pass
+            - RABBITMQ_DEFAULT_USER=user
+            - RABBITMQ_HOST=rabbit
+        volumes:
+            - ./auth:/auth
+            - /auth/node_modules
+            - /auth/dist
+        depends_on:
+            - rabbit
+
+    gateway:
+        build:
+            context: ./gateway
+        container_name: microservice-gateway
+        ports:
+            - 4000:4000
+        command: sh -c "yarn start:dev"
+        volumes:
+            - ./gateway:/gateway
+            - /gateway/node_modules
+            - /gateway/dist
+        depends_on:
+            - rabbit
+
+    rabbit:
+        image: rabbitmq:management
+        container_name: rabbitmq
+        environment:
+            - RABBITMQ_DEFAULT_PASS=pass
+            - RABBITMQ_DEFAULT_USER=user
+            - RABBITMQ_HOST=rabbit
+        ports:
+            - 5672:5672
+            - 15672:15672

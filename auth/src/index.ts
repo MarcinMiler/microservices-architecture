@@ -1,11 +1,24 @@
-import express from 'express'
+import * as TE from 'fp-ts/lib/TaskEither'
+import * as P from 'fp-ts/lib/pipeable'
 
-const server = express()
+import { tryConnectToRabbit } from './common/connections/rabbitmq'
 
-server.get('/', (req, res) => {
-    res.json({
-        login: true,
+const program = P.pipe(
+    tryConnectToRabbit,
+    TE.chain(rabbitClient =>
+        TE.tryCatch(
+            () => rabbitClient.createChannel(),
+            () => 'Failed on creating channel'
+        )
+    ),
+    TE.chain(channel => {
+        channel.assertQueue('hello')
+        channel.consume('hello', msg => {
+            console.log(msg.content.toString())
+        })
+
+        return TE.right(channel)
     })
-})
+)
 
-server.listen(4001, () => console.log('Auth microservice is listening...'))
+program()

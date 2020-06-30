@@ -1,6 +1,6 @@
 FROM mhart/alpine-node:latest
 
-WORKDIR /auth
+WORKDIR /gateway
 
 COPY . .
 
@@ -8,6 +8,6 @@ RUN yarn
 
 RUN yarn compile
 
-EXPOSE 4001
+EXPOSE 4000
 
 CMD ["yarn", "start:prod"]

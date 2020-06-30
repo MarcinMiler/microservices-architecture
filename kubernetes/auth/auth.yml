@@ -8,12 +8,9 @@ spec:
         app: auth
     ports:
         - protocol: 'TCP'
-          # Port accessible inside cluster
           port: 4002
-          # Port to forward to inside the pod
           targetPort: 4001
-          # Port accessible outside cluster
-          nodePort: 30001
+          nodePort: 30002
     type: LoadBalancer
 
 ---
@@ -30,6 +27,13 @@ spec:
         spec:
             containers:
                 - name: auth
-                  image: 49514951/auth
+                  image: 49514951/auth:test
                   ports:
                       - containerPort: 4001
+                  env:
+                      - name: RABBITMQ_DEFAULT_USER
+                        value: 'user'
+                      - name: RABBITMQ_DEFAULT_PASS
+                        value: 'pass'
+                      - name: RABBITMQ_HOST
+                        value: 'rabbitmq-service'
