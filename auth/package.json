@@ -8,7 +8,7 @@
     "dependencies": {
         "@types/amqplib": "^0.5.13",
         "amqplib": "^0.5.6",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "fp-ts": "^2.6.6",
         "retry-ts": "^0.1.2",
         "typescript": "^3.9.5"
